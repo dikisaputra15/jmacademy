@@ -10,7 +10,7 @@
         <ul class="navbar-nav navbar-nav-right">
 
           <li class="nav-item nav-profile">
-            <a class="nav-link" href="#">
+            <a class="nav-link" href="{{ route('profile.edit') }}" title="Profil saya">
               <img src="{{ asset('images/faces/face28.jpg') }}" alt="profile"/>
             </a>
           </li>

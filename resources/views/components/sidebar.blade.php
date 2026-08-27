@@ -88,17 +88,18 @@
             </div>
         </li>
 
-           <li class="nav-item">
-            <a class="nav-link" href="">
-              <i class="icon-contract menu-icon"></i>
-              <span class="menu-title">Profile</span>
-            </a>
-          </li>
           @endrole
 
           @role('student')
 
-           <li class="nav-item">
+           <li class="nav-item {{ request()->routeIs('student-courses.*') ? 'active' : '' }}">
+            <a class="nav-link" href="{{ route('student-courses.index') }}">
+              <i class="icon-grid-2 menu-icon"></i>
+              <span class="menu-title">All Courses</span>
+            </a>
+          </li>
+
+          <li class="nav-item">
             <a class="nav-link" href="">
               <i class="icon-grid-2 menu-icon"></i>
               <span class="menu-title">My Classes</span>
@@ -112,5 +113,12 @@
             </a>
           </li>
           @endrole
+
+          <li class="nav-item {{ request()->routeIs('profile.*') ? 'active' : '' }}">
+            <a class="nav-link" href="{{ route('profile.edit') }}">
+              <i class="icon-head menu-icon"></i>
+              <span class="menu-title">Profile</span>
+            </a>
+          </li>
         </ul>
       </nav>

@@ -3,6 +3,9 @@
 use App\Http\Controllers\CourseCategoryController;
 use App\Http\Controllers\CourseController;
 use App\Http\Controllers\CurriculumController;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\RegionController;
+use App\Http\Controllers\StudentCourseController;
 use App\Http\Controllers\UserManagementController;
 use Illuminate\Support\Facades\Route;
 
@@ -18,6 +21,19 @@ Route::middleware('guest')->group(function () {
 Route::view('/home', 'pages.dashboard')
     ->middleware(['auth', 'active'])
     ->name('home');
+
+Route::middleware(['auth', 'active'])->group(function () {
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::get('/regions/{level}/{parent?}', [RegionController::class, 'index'])
+        ->whereIn('level', ['provinces', 'regencies'])
+        ->whereNumber('parent')
+        ->name('regions.index');
+});
+
+Route::middleware(['auth', 'active', 'role:student'])->group(function () {
+    Route::get('/all-courses', [StudentCourseController::class, 'index'])->name('student-courses.index');
+});
 
 Route::middleware(['auth', 'active', 'role:admin'])->group(function () {
     Route::patch('/management-users/{user}/toggle-status', [UserManagementController::class, 'toggleStatus'])
