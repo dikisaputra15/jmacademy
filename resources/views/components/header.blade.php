@@ -1,6 +1,6 @@
 <nav class="navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row">
       <div class="text-center navbar-brand-wrapper d-flex align-items-center justify-content-center">
-        <h5>Banten Water</h5>
+        <h5>JM Academy</h5>
       </div>
       <div class="navbar-menu-wrapper d-flex align-items-center justify-content-end">
         <button class="navbar-toggler navbar-toggler align-self-center" type="button" data-toggle="minimize">
@@ -14,12 +14,6 @@
               <img src="{{ asset('images/faces/face28.jpg') }}" alt="profile"/>
             </a>
           </li>
-
-        <li class="nav-item mx-1">
-            <h5>
-                <a href="{{ route('profile') }}"> {{ auth()->user()->roles }} </a>
-            </h5>
-        </li>
 
           <li class="nav-item mx-1">
                 <a class="btn btn-success" href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit()">

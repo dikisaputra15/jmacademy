@@ -17,7 +17,7 @@
               <form class="pt-3" method="POST" action="{{ route('login') }}">
                 @csrf
                 <div class="form-group">
-                  <input type="email" name="email" class="form-control form-control-lg" id="exampleInputEmail1" placeholder="Username">
+                  <input type="email" name="email" class="form-control form-control-lg" id="exampleInputEmail1" placeholder="Email">
                 </div>
                 <div class="form-group">
                   <div class="input-group">
