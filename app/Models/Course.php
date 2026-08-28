@@ -33,4 +33,16 @@ class Course extends Model
     {
         return $this->belongsToMany(User::class, 'course_teacher')->withTimestamps();
     }
+
+    public function students(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class, 'course_student')
+            ->withPivot(['amount', 'sender_name', 'sender_bank', 'transfer_date', 'payment_proof_path', 'payment_status'])
+            ->withTimestamps();
+    }
+
+    public function transactions(): HasMany
+    {
+        return $this->hasMany(CourseTransaction::class);
+    }
 }

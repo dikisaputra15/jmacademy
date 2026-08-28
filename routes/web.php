@@ -33,6 +33,9 @@ Route::middleware(['auth', 'active'])->group(function () {
 
 Route::middleware(['auth', 'active', 'role:student'])->group(function () {
     Route::get('/all-courses', [StudentCourseController::class, 'index'])->name('student-courses.index');
+    Route::get('/all-courses/{course}/payment', [StudentCourseController::class, 'payment'])->name('student-courses.payment');
+    Route::post('/all-courses/{course}/enroll', [StudentCourseController::class, 'enroll'])->name('student-courses.enroll');
+    Route::get('/my-transactions', [StudentCourseController::class, 'transactions'])->name('student-transactions.index');
 });
 
 Route::middleware(['auth', 'active', 'role:admin'])->group(function () {

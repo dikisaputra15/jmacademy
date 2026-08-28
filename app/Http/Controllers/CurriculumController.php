@@ -50,6 +50,7 @@ class CurriculumController extends Controller
         $validated = $request->validate([
             'title' => ['required', 'string', 'max:255'],
             'meetings' => ['required', 'integer', 'min:1', 'max:999'],
+            'fee_per_meeting' => ['required', 'integer', 'min:0', 'max:999999999'],
             'sort_order' => ['required', 'integer', 'min:0'],
         ]);
 

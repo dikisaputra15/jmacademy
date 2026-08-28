@@ -30,6 +30,12 @@
               <span class="menu-title">Course</span>
             </a>
           </li>
+         <li class="nav-item">
+            <a class="nav-link" href="">
+              <i class="icon-grid-2 menu-icon"></i>
+              <span class="menu-title">Student Register</span>
+            </a>
+          </li>
           @endrole
 
           @role('guru')
@@ -103,6 +109,13 @@
             <a class="nav-link" href="">
               <i class="icon-grid-2 menu-icon"></i>
               <span class="menu-title">My Classes</span>
+            </a>
+          </li>
+
+        <li class="nav-item {{ request()->routeIs('student-transactions.*') ? 'active' : '' }}">
+            <a class="nav-link" href="{{ route('student-transactions.index') }}">
+              <i class="icon-grid-2 menu-icon"></i>
+              <span class="menu-title">My Transactions</span>
             </a>
           </li>
 

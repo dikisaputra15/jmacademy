@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-#[Fillable(['curriculum_section_id', 'title', 'meetings', 'sort_order'])]
+#[Fillable(['curriculum_section_id', 'title', 'meetings', 'fee_per_meeting', 'sort_order'])]
 class CurriculumLesson extends Model
 {
     public function section(): BelongsTo
