@@ -14,10 +14,35 @@
                 <h3>Login</h3>
               </div>
 
-              <form class="pt-3" method="POST" action="{{ route('login') }}">
+              @if (session('status'))
+                <div class="alert alert-success">{{ session('status') }}</div>
+              @endif
+
+              @if ($errors->any())
+                <div class="alert alert-danger">
+                  {{ $errors->first() }}
+                </div>
+              @endif
+
+              <a href="{{ route('google.redirect') }}" class="btn btn-block btn-outline-danger btn-lg font-weight-medium">
+                <i class="mdi mdi-google mr-2"></i>
+                Masuk dengan Google
+              </a>
+
+              <div class="text-center text-muted my-3">atau masuk dengan email</div>
+
+              <form method="POST" action="{{ route('login') }}">
                 @csrf
                 <div class="form-group">
                   <input type="email" name="email" class="form-control form-control-lg" id="exampleInputEmail1" placeholder="Email">
+                </div>
+
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                  <label class="mb-0">
+                    <input type="checkbox" name="remember">
+                    Ingat saya
+                  </label>
+                  <a href="{{ route('password.request') }}" class="text-primary">Lupa password?</a>
                 </div>
                 <div class="form-group">
                   <div class="input-group">

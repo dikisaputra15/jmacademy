@@ -5,6 +5,7 @@ use App\Http\Controllers\AdminTeacherSalaryController;
 use App\Http\Controllers\CourseController;
 use App\Http\Controllers\CurriculumController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\GoogleAuthController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PaidScheduleController;
 use App\Http\Controllers\PendingReportController;
@@ -21,6 +22,7 @@ use App\Http\Controllers\TeacherTrialScheduleController;
 use App\Http\Controllers\TeacherCourseController;
 use App\Http\Controllers\TrialScheduleController;
 use App\Http\Controllers\UserManagementController;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -30,6 +32,13 @@ Route::get('/', function () {
 Route::middleware('guest')->group(function () {
     Route::view('/login', 'pages.auth.login')->name('login');
     Route::view('/register', 'pages.auth.register')->name('register');
+    Route::view('/forgot-password', 'pages.auth.forgot-password')->name('password.request');
+    Route::get('/reset-password/{token}', fn (string $token, Request $request) => view('pages.auth.reset-password', [
+        'token' => $token,
+        'email' => $request->query('email'),
+    ]))->name('password.reset');
+    Route::get('/auth/google/redirect', [GoogleAuthController::class, 'redirect'])->name('google.redirect');
+    Route::get('/auth/google/callback', [GoogleAuthController::class, 'callback'])->name('google.callback');
 });
 
 Route::get('/home', [DashboardController::class, 'index'])

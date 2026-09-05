@@ -14,7 +14,7 @@ use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasRoles;
 
 #[Fillable([
-    'name', 'email', 'password', 'is_active', 'phone', 'gender', 'date_of_birth',
+    'name', 'email', 'password', 'google_id', 'google_avatar', 'email_verified_at', 'is_active', 'phone', 'gender', 'date_of_birth',
     'province_id', 'province_name', 'regency_id', 'regency_name', 'postal_code', 'address',
     'parent_name', 'parent_phone',
     'bank_name', 'bank_account_number', 'bank_account_holder',

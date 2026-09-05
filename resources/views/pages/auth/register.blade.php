@@ -18,6 +18,28 @@
                 <h3>Register</h3>
             </div>
 
+            @if ($errors->has('google'))
+                <div class="alert alert-danger">{{ $errors->first('google') }}</div>
+            @endif
+
+            <p class="text-muted">Daftar cepat menggunakan akun Google:</p>
+            <div class="row mb-4">
+                <div class="col-md-6 mb-2">
+                    <a href="{{ route('google.redirect', ['role' => 'guru']) }}" class="btn btn-outline-danger btn-block">
+                        <i class="mdi mdi-google mr-1"></i>
+                        Google sebagai Guru
+                    </a>
+                </div>
+                <div class="col-md-6 mb-2">
+                    <a href="{{ route('google.redirect', ['role' => 'student']) }}" class="btn btn-outline-danger btn-block">
+                        <i class="mdi mdi-google mr-1"></i>
+                        Google sebagai Student
+                    </a>
+                </div>
+            </div>
+
+            <div class="text-center text-muted mb-4">atau daftar menggunakan form</div>
+
             <form method="POST" action="{{ route('register') }}">
                 @csrf
 
@@ -96,12 +118,12 @@
                     </button>
                 </div>
 
-                <!-- <div class="text-center mt-4 font-weight-light">
+                <div class="text-center mt-4 font-weight-light">
                     Already have an account?
                     <a href="{{ route('login') }}" class="text-primary">
                         Login
                     </a>
-                </div> -->
+                </div>
 
             </form>
 
