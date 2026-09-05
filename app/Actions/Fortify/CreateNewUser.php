@@ -3,6 +3,7 @@
 namespace App\Actions\Fortify;
 
 use App\Models\User;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
@@ -32,12 +33,27 @@ class CreateNewUser implements CreatesNewUsers
                 Rule::unique(User::class),
             ],
             'password' => $this->passwordRules(),
+            'role' => ['required', Rule::in(['guru', 'student']), Rule::exists('roles', 'name')],
+            'phone' => ['required', 'string', 'regex:/^[0-9+()\-\s]{8,20}$/'],
+            'address' => ['required', 'string', 'max:1000'],
+        ], [
+            'role.required' => 'Silakan pilih daftar sebagai guru atau student.',
+            'role.in' => 'Role pendaftaran tidak valid.',
+            'phone.regex' => 'Format nomor HP tidak valid.',
         ])->validate();
 
-        return User::create([
-            'name' => $input['name'],
-            'email' => $input['email'],
-            'password' => Hash::make($input['password']),
-        ]);
+        return DB::transaction(function () use ($input) {
+            $user = User::create([
+                'name' => $input['name'],
+                'email' => $input['email'],
+                'phone' => $input['phone'],
+                'address' => $input['address'],
+                'password' => Hash::make($input['password']),
+            ]);
+
+            $user->assignRole($input['role']);
+
+            return $user;
+        });
     }
 }

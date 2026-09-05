@@ -121,7 +121,15 @@ class CourseController extends Controller
 
     private function teachers()
     {
-        return User::role('guru')->orderBy('name')->get();
+        return User::role('guru')
+            ->with('teachingCategories')
+            ->withCount([
+                'teachingCourses as active_teaching_courses_count' => fn ($query) => $query
+                    ->where('courses.is_active', true),
+            ])
+            ->orderBy('active_teaching_courses_count')
+            ->orderBy('name')
+            ->get();
     }
 
     private function generateCourseCode(): string

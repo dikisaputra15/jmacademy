@@ -38,7 +38,7 @@
                             <td><strong class="d-block">{{ $transaction->sender_name }}</strong><small class="text-muted">{{ $transaction->sender_bank }} · {{ $transaction->transfer_date?->format('d M Y') }}</small></td>
                             <td><span class="text-nowrap">{{ $transaction->created_at->format('d M Y') }}</span><small class="text-muted d-block">{{ $transaction->created_at->format('H:i') }}</small></td>
                             <td><span class="transaction-amount">Rp {{ number_format($transaction->amount, 0, ',', '.') }}</span></td>
-                            <td><span class="badge badge-{{ $status[1] }} status-pill"><i class="{{ $status[2] }} mr-1"></i>{{ $status[0] }}</span></td>
+                            <td><span class="badge badge-{{ $status[1] }} status-pill"><i class="{{ $status[2] }} mr-1"></i>{{ $status[0] }}</span>@if($transaction->verification_note)<small class="text-danger d-block mt-2">{{ $transaction->verification_note }}</small>@endif</td>
                         </tr>
                     @endforeach
                 </tbody>

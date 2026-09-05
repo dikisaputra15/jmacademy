@@ -90,6 +90,48 @@
             </div>
             @endrole
 
+            @role('guru')
+            <div class="section-title mt-3">Data Pengajar</div>
+            <div class="row">
+                <div class="col-md-4 form-group">
+                    <label for="bank_name">Nama Bank</label>
+                    <input id="bank_name" name="bank_name" type="text" maxlength="100" class="form-control @error('bank_name') is-invalid @enderror" value="{{ old('bank_name', $user->bank_name) }}" placeholder="Contoh: BCA">
+                    @error('bank_name')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                </div>
+                <div class="col-md-4 form-group">
+                    <label for="bank_account_number">Nomor Rekening</label>
+                    <input id="bank_account_number" name="bank_account_number" type="text" inputmode="numeric" maxlength="50" class="form-control @error('bank_account_number') is-invalid @enderror" value="{{ old('bank_account_number', $user->bank_account_number) }}" placeholder="Nomor rekening pengajar">
+                    @error('bank_account_number')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                </div>
+                <div class="col-md-4 form-group">
+                    <label for="bank_account_holder">Nama Pemilik Rekening</label>
+                    <input id="bank_account_holder" name="bank_account_holder" type="text" maxlength="255" class="form-control @error('bank_account_holder') is-invalid @enderror" value="{{ old('bank_account_holder', $user->bank_account_holder) }}" placeholder="Sesuai buku rekening">
+                    @error('bank_account_holder')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Spesialisasi Category Course</label>
+                @php
+                    $selectedCategories = collect(
+                        old('teaching_category_ids', $user->teachingCategories->pluck('id')->all())
+                    )->map(fn ($id) => (string) $id);
+                @endphp
+                <div class="border rounded p-3 @error('teaching_category_ids') border-danger @enderror">
+                    @forelse($teachingCategories as $category)
+                        <div class="custom-control custom-checkbox mb-2">
+                            <input type="checkbox" class="custom-control-input" id="teaching-category-{{ $category->id }}" name="teaching_category_ids[]" value="{{ $category->id }}" @checked($selectedCategories->contains((string)$category->id))>
+                            <label class="custom-control-label" for="teaching-category-{{ $category->id }}">{{ $category->name }}</label>
+                        </div>
+                    @empty
+                        <span class="text-muted">Belum ada category course aktif yang dapat dipilih.</span>
+                    @endforelse
+                </div>
+                <small class="form-text text-muted">Pilih satu atau beberapa bidang keahlian. Admin tetap menentukan course yang akan ditugaskan kepada Anda.</small>
+                @error('teaching_category_ids')<div class="text-danger small mt-1">{{ $message }}</div>@enderror
+                @error('teaching_category_ids.*')<div class="text-danger small mt-1">{{ $message }}</div>@enderror
+            </div>
+            @endrole
+
             <div class="section-title mt-3">Alamat</div>
             <div id="region-alert" class="alert alert-warning d-none" role="alert"></div>
             <div class="row">
@@ -165,7 +207,8 @@
 
             element.innerHTML = '<option value="">Pilih ' + label(level) + '</option>';
             payload.data.forEach(function (region) {
-                const option = new Option(region.name, region.code || region.id);
+                const regionCode = String(region.code || region.id).replace(/\D/g, '');
+                const option = new Option(region.name, regionCode);
                 element.add(option);
             });
             element.disabled = false;

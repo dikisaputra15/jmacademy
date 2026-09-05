@@ -43,11 +43,17 @@
     <select id="teacher_ids" name="teacher_ids[]" class="form-control @error('teacher_ids') is-invalid @enderror" multiple size="{{ min(max($teachers->count(), 3), 7) }}">
         @foreach($teachers as $teacher)
             <option value="{{ $teacher->id }}" @selected(in_array((string) $teacher->id, $selectedTeachers, true))>
-                {{ $teacher->name }} — {{ $teacher->email }}{{ $teacher->is_active ? '' : ' (Nonaktif)' }}
+                {{ $teacher->active_teaching_courses_count === 0 ? '[BELUM MENGAJAR]' : '[MENGAJAR '.$teacher->active_teaching_courses_count.' COURSE]' }} {{ $teacher->name }} — {{ $teacher->email }} · Spesialisasi: {{ $teacher->teachingCategories->pluck('name')->join(', ') ?: 'Belum dipilih' }}{{ $teacher->is_active ? '' : ' (Akun Nonaktif)' }}
             </option>
         @endforeach
     </select>
-    <small class="form-text text-muted">Tahan Ctrl (Windows) atau Command (Mac) untuk memilih lebih dari satu guru.</small>
+    <small class="form-text text-muted">Guru yang belum mengajar otomatis ditampilkan paling atas. Tahan Ctrl (Windows) atau Command (Mac) untuk memilih lebih dari satu guru.</small>
+    @if($teachers->isNotEmpty())
+        <div class="mt-2">
+            <span class="badge badge-success mr-1">{{ $teachers->where('active_teaching_courses_count', 0)->count() }} belum mengajar</span>
+            <span class="badge badge-info">{{ $teachers->where('active_teaching_courses_count', '>', 0)->count() }} sedang mengajar</span>
+        </div>
+    @endif
     @if($teachers->isEmpty())<small class="form-text text-warning">Belum ada user dengan role guru. Tambahkan melalui Management User.</small>@endif
     @error('teacher_ids')<div class="invalid-feedback">{{ $message }}</div>@enderror
 </div>
