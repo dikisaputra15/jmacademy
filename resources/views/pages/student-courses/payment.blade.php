@@ -48,12 +48,12 @@
                                 <select id="class_category_id" name="class_category_id" class="form-control" required>
                                     <option value="">Pilih kategori kelas</option>
                                     @foreach($classCategories as $classCategory)
-                                        <option value="{{ $classCategory->id }}" data-total="{{ $meetingTotal * $classCategory->fee_per_meeting }}" @selected((string) old('class_category_id') === (string) $classCategory->id) @disabled($classCategory->fee_per_meeting === null)>
-                                            {{ $classCategory->name }} ({{ $classCategory->capacity }} siswa) — {{ $classCategory->fee_per_meeting === null ? 'Biaya belum ditentukan' : 'Rp '.number_format($classCategory->fee_per_meeting, 0, ',', '.').'/pertemuan' }}
+                                        <option value="{{ $classCategory->id }}" data-total="{{ $classCategory->fee_per_meeting }}" @selected((string) old('class_category_id') === (string) $classCategory->id) @disabled($classCategory->fee_per_meeting === null)>
+                                            {{ $classCategory->name }} ({{ $classCategory->capacity }} siswa) — {{ $classCategory->fee_per_meeting === null ? 'Biaya belum ditentukan' : 'Rp '.number_format($classCategory->fee_per_meeting, 0, ',', '.') }}
                                         </option>
                                     @endforeach
                                 </select>
-                                <small class="form-text text-muted">Total pembayaran sesuai tarif kategori × {{ $meetingTotal }} pertemuan.</small>
+                                <small class="form-text text-muted">Total pembayaran sesuai biaya kategori kelas yang dipilih.</small>
                                 @if(! $classCategories->contains(fn ($category) => $category->fee_per_meeting !== null))
                                     <small class="text-warning">Kategori kelas belum tersedia. Silakan hubungi admin.</small>
                                 @endif

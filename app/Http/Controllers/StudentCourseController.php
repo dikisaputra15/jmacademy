@@ -53,7 +53,6 @@ class StudentCourseController extends Controller
         return view('pages.student-courses.payment', [
             'course' => $course,
             'classCategories' => ClassCategory::orderBy('id')->get(),
-            'meetingTotal' => $course->sections->sum(fn ($section) => $section->lessons->sum('meetings')),
         ]);
     }
 
@@ -75,7 +74,6 @@ class StudentCourseController extends Controller
             'payment_proof.max' => 'Ukuran bukti transfer maksimal 2 MB.',
         ]);
 
-        $course->load('sections.lessons');
         $classCategory = ClassCategory::findOrFail($validated['class_category_id']);
         $proofPath = $request->file('payment_proof')->store('payment-proofs');
 
@@ -83,7 +81,7 @@ class StudentCourseController extends Controller
             'course_id' => $course->id,
             'user_id' => $request->user()->id,
             'class_category_id' => $classCategory->id,
-            'amount' => $course->sections->sum(fn ($section) => $section->lessons->sum('meetings')) * $classCategory->fee_per_meeting,
+            'amount' => $classCategory->fee_per_meeting,
             'sender_name' => $validated['sender_name'],
             'sender_bank' => $validated['sender_bank'],
             'transfer_date' => $validated['transfer_date'],

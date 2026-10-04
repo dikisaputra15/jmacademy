@@ -47,15 +47,28 @@ class StudentCourseTest extends TestCase
             'fee_per_meeting' => 125000,
         ]);
 
+        ClassCategory::where('name', 'Reguler A')->update(['fee_per_meeting' => 50000]);
+        ClassCategory::where('name', 'Private')->update(['fee_per_meeting' => 200000]);
+
         $this->actingAs($student)
             ->get(route('student-courses.index'))
             ->assertOk()
             ->assertSee('English Starter')
             ->assertSee('Introduction')
             ->assertSee('Greetings and Introductions')
-            ->assertSee('Rp 250.000')
+            ->assertDontSee('Total biaya course')
+            ->assertDontSee('Rp 50.000')
+            ->assertDontSee('Rp 250.000')
             ->assertSee('Ikuti Kelas')
             ->assertDontSee($inactiveCourse->name);
+
+        ClassCategory::query()->update(['fee_per_meeting' => null]);
+        $this->get(route('student-courses.index'))->assertOk()
+            ->assertDontSee('Biaya belum tersedia')->assertDontSee('Rp 0');
+
+        ClassCategory::where('name', 'Reguler A')->update(['fee_per_meeting' => 0]);
+        $this->get(route('student-courses.index'))->assertOk()
+            ->assertDontSee('Rp 0')->assertDontSee('Biaya belum tersedia');
     }
 
     public function test_non_student_cannot_open_student_course_catalog(): void
@@ -118,9 +131,9 @@ class StudentCourseTest extends TestCase
         ])->assertRedirect(route('student-transactions.index'));
 
         $this->assertDatabaseCount('course_student', 2);
-        $this->assertDatabaseHas('course_student', ['course_id' => $course->id, 'amount' => 300000]);
+        $this->assertDatabaseHas('course_student', ['course_id' => $course->id, 'amount' => 150000]);
         $payment = $student->courseTransactions()->firstOrFail();
-        $this->assertSame(250000, $payment->amount);
+        $this->assertSame(125000, $payment->amount);
         $this->assertSame('pending', $payment->payment_status);
         $this->assertSame($classCategory->id, $payment->class_category_id);
         Storage::disk('local')->assertExists($payment->payment_proof_path);
@@ -132,6 +145,6 @@ class StudentCourseTest extends TestCase
             ->get(route('student-transactions.index'))
             ->assertOk()
             ->assertSee('Menunggu Verifikasi')
-            ->assertSee('Rp 250.000');
+            ->assertSee('Rp 125.000');
     }
 }

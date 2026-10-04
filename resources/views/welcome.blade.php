@@ -6,9 +6,9 @@
         <meta name="theme-color" content="#071522" />
         <meta
             name="description"
-            content="JM Academy, kelas pemrograman dan robotika kreatif untuk anak dan remaja."
+            content="JM Education, kelas pemrograman dan robotika kreatif untuk anak dan remaja."
         />
-        <title>JM Academy — Pemrograman dan Robotika</title>
+        <title>JM Education — Pemrograman dan Robotika</title>
         <link rel="preconnect" href="https://fonts.bunny.net" />
         <link
             href="https://fonts.bunny.net/css?family=plus-jakarta-sans:400,500,600,700,800&display=swap"
@@ -69,18 +69,6 @@
                 font-weight: 800;
                 font-size: 19px;
                 letter-spacing: -0.04em;
-            }
-            .mark {
-                width: 40px;
-                height: 40px;
-                border-radius: 13px;
-                background: linear-gradient(135deg, var(--blue), var(--cyan));
-                display: grid;
-                place-items: center;
-                box-shadow: 0 10px 30px #1687ff55;
-            }
-            .mark svg {
-                width: 25px;
             }
             .logo small {
                 display: block;
@@ -1029,23 +1017,8 @@
         <nav class="nav">
             <div class="container nav-in">
                 <a class="logo" href="#home"
-                    ><span class="mark"
-                        ><svg viewBox="0 0 24 24" fill="none">
-                            <path
-                                d="M5 8h14v10H5z"
-                                stroke="white"
-                                stroke-width="1.8"
-                            />
-                            <circle cx="9" cy="12" r="1.3" fill="white" />
-                            <circle cx="15" cy="12" r="1.3" fill="white" />
-                            <path
-                                d="M9 15h6M12 8V5m-2 0h4"
-                                stroke="white"
-                                stroke-width="1.8"
-                                stroke-linecap="round"
-                            /></svg></span
-                    ><span
-                        >JM Academy<small>BELAJAR • BERKARYA • BERINOVASI</small></span
+                    ><x-education-logo /><span
+                        >JM Education<small>BELAJAR • BERKARYA • BERINOVASI</small></span
                     ></a
                 ><button
                     class="menu"
@@ -1262,7 +1235,7 @@
                         </div>
                     </div>
                     <div class="why reveal">
-                        <span class="eyebrow"><i></i>Kenapa JM Academy?</span>
+                        <span class="eyebrow"><i></i>Kenapa JM Education?</span>
                         <h2>
                             Bukan cuma belajar.<br />Anak akan
                             <span class="gradient">mencipta.</span>
@@ -1362,7 +1335,7 @@
                             </div>
                             <a
                                 class="btn"
-                                href="https://wa.me/6281234567890?text=Halo%20JM%20Academy%2C%20saya%20ingin%20mendaftar%20kelas%20percobaan"
+                                href="https://wa.me/62895637313930?text=Halo%20JM%20Academy%2C%20saya%20ingin%20mendaftar%20kelas%20percobaan" target="_blank"
                                 >Daftar Kelas Percobaan Gratis →</a
                             >
                         </div>
@@ -1373,25 +1346,11 @@
         <footer id="kontak">
             <div class="container footer">
                 <a class="logo" href="#home"
-                    ><span class="mark"
-                        ><svg viewBox="0 0 24 24" fill="none">
-                            <path
-                                d="M5 8h14v10H5z"
-                                stroke="white"
-                                stroke-width="1.8"
-                            />
-                            <circle cx="9" cy="12" r="1.3" fill="white" />
-                            <circle
-                                cx="15"
-                                cy="12"
-                                r="1.3"
-                                fill="white"
-                            /></svg></span
-                    ><span
-                        >JM Academy<small>BELAJAR • BERKARYA • BERINOVASI</small></span
+                    ><x-education-logo /><span
+                        >JM Education<small>BELAJAR • BERKARYA • BERINOVASI</small></span
                     ></a
                 ><span
-                    >© {{ date('Y') }} JM Academy. Hak cipta dilindungi.</span
+                    >© {{ date('Y') }} JM Education. Hak cipta dilindungi.</span
                 >
                 <div class="footlinks">
                     <a href="#program">Program</a

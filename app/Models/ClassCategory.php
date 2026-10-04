@@ -14,6 +14,11 @@ class ClassCategory extends Model
         return ['capacity' => 'integer', 'fee_per_meeting' => 'integer'];
     }
 
+    public function transactions(): HasMany
+    {
+        return $this->hasMany(CourseTransaction::class);
+    }
+
     public function courses(): HasMany
     {
         return $this->hasMany(Course::class);

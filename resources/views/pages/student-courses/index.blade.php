@@ -13,7 +13,6 @@
     .curriculum-section { border-left: 3px solid #4b49ac; margin-bottom: 15px; padding-left: 14px; }
     .lesson-item { align-items: center; border-top: 1px solid #edf0f3; display: flex; justify-content: space-between; padding: 9px 0; }
     .filter-card { border: 0; border-radius: 12px; }
-    .course-price { color: #4b49ac; font-size: 22px; font-weight: 700; }
 </style>
 @endpush
 
@@ -61,7 +60,6 @@
         @php
             $lessonTotal = $course->sections->sum(fn ($section) => $section->lessons->count());
             $meetingTotal = $course->sections->sum(fn ($section) => $section->lessons->sum('meetings'));
-            $courseTotal = $course->sections->sum(fn ($section) => $section->lessons->sum(fn ($lesson) => $lesson->meetings * $lesson->fee_per_meeting));
             $curriculumId = 'curriculum-'.$course->id;
         @endphp
         <div class="col-xl-4 col-md-6 mb-4">
@@ -85,10 +83,6 @@
                         <span><i class="ti-time mr-1"></i> {{ $meetingTotal }} pertemuan</span>
                     </div>
                     <div class="d-flex flex-wrap justify-content-between align-items-center pt-3 mb-3">
-                        <div class="mr-3 mb-2">
-                            <small class="text-muted d-block">Total biaya course</small>
-                            <span class="course-price">Rp {{ number_format($courseTotal, 0, ',', '.') }}</span>
-                        </div>
                         <a href="{{ route('student-courses.payment', $course) }}" class="btn btn-primary mb-2"><i class="ti-plus mr-1"></i> Ikuti Kelas</a>
                     </div>
                     <a class="curriculum-toggle mt-auto" data-toggle="collapse" href="#{{ $curriculumId }}" role="button" aria-expanded="false" aria-controls="{{ $curriculumId }}">
@@ -106,7 +100,7 @@
                                 @forelse ($section->lessons as $lesson)
                                     <div class="lesson-item">
                                         <span><span class="badge badge-light mr-1">{{ $loop->parent->iteration }}.{{ $loop->iteration }}</span> {{ $lesson->title }}</span>
-                                        <small class="text-muted ml-2 text-right">{{ $lesson->meetings }}×<br>Rp {{ number_format($lesson->fee_per_meeting, 0, ',', '.') }}/pertemuan</small>
+                                        <small class="text-muted ml-2 text-right">{{ $lesson->meetings }} pertemuan</small>
                                     </div>
                                 @empty
                                     <small class="text-muted">Belum ada lesson.</small>

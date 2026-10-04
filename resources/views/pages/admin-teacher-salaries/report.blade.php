@@ -14,7 +14,7 @@
 </head>
 <body>
 <div class="toolbar"><a href="{{ route('admin-teacher-salaries.index', ['month' => $month]) }}">Kembali</a><button onclick="window.print()">Cetak / Simpan PDF</button></div>
-<h1>JM Academy — Laporan Gaji Guru</h1>
+<h1>JM Education — Laporan Gaji Guru</h1>
 <p>Periode honor: <strong>{{ \Carbon\Carbon::createFromFormat('!Y-m', $month)->translatedFormat('F Y') }}</strong></p>
 <p class="muted">Dikelompokkan berdasarkan bulan honor tercatat. Dicetak {{ now()->format('d/m/Y H:i') }}. Status pembayaran sesuai data saat laporan dibuat.</p>
 <table>

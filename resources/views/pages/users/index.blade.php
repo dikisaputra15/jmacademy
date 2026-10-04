@@ -41,7 +41,7 @@
 <div class="d-flex flex-wrap justify-content-between align-items-center mb-4">
     <div>
         <h3 class="font-weight-bold mb-1">Management User</h3>
-        <p class="text-muted mb-0">Kelola akun, role, dan status pengguna JM Academy.</p>
+        <p class="text-muted mb-0">Kelola akun, role, dan status pengguna JM Education.</p>
     </div>
     <a href="{{ route('users.create') }}" class="btn btn-primary mt-3 mt-md-0">
         <i class="ti-plus mr-1"></i> Tambah User
