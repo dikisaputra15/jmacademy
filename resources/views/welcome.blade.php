@@ -6,9 +6,9 @@
         <meta name="theme-color" content="#071522" />
         <meta
             name="description"
-            content="JM Academy, kelas coding dan robotik kreatif untuk anak dan remaja."
+            content="JM Academy, kelas pemrograman dan robotika kreatif untuk anak dan remaja."
         />
-        <title>JM Academy — Coding & Robotics</title>
+        <title>JM Academy — Pemrograman dan Robotika</title>
         <link rel="preconnect" href="https://fonts.bunny.net" />
         <link
             href="https://fonts.bunny.net/css?family=plus-jakarta-sans:400,500,600,700,800&display=swap"
@@ -1045,7 +1045,7 @@
                                 stroke-linecap="round"
                             /></svg></span
                     ><span
-                        >JM Academy<small>CODE • CREATE • INNOVATE</small></span
+                        >JM Academy<small>BELAJAR • BERKARYA • BERINOVASI</small></span
                     ></a
                 ><button
                     class="menu"
@@ -1060,9 +1060,9 @@
                     ><a href="#cara">Cara Belajar</a>
                     <div class="auth-links">
                         <a class="login-link" href="{{ route('login') }}"
-                            >Login</a
+                            >Masuk</a
                         ><a class="register-link" href="{{ route('register') }}"
-                            >Register</a
+                            >Daftar</a
                         >
                     </div>
                 </div>
@@ -1073,16 +1073,16 @@
                 <div class="container hero-grid">
                     <div class="hero-copy">
                         <span class="eyebrow"
-                            ><i></i>Future skills start here</span
+                            ><i></i>Keterampilan masa depan dimulai di sini</span
                         >
                         <h1>
-                            Build the future,<br /><span class="gradient"
-                                >one line at a time.</span
+                            Ciptakan masa depan,<br /><span class="gradient"
+                                >mulai dari satu langkah.</span
                             >
                         </h1>
                         <p>
                             Tempat anak dan remaja mengubah rasa ingin tahu
-                            menjadi karya nyata melalui coding, robotik, dan
+                            menjadi karya nyata melalui pemrograman, robotika, dan
                             teknologi kreatif.
                         </p>
                         <div class="actions">
@@ -1098,18 +1098,18 @@
                             </div>
                             <i class="divider"></i>
                             <div>
-                                <strong>25+</strong><span>Mentor ahli</span>
+                                <strong>25+</strong><span>Pengajar ahli</span>
                             </div>
                             <i class="divider"></i>
                             <div>
-                                <strong>4.9/5</strong
-                                ><span>Rating orang tua</span>
+                                <strong>4,9/5</strong
+                                ><span>Penilaian orang tua</span>
                             </div>
                         </div>
                     </div>
                     <div
                         class="visual"
-                        aria-label="Robot animasi sedang belajar coding"
+                        aria-label="Robot animasi sedang belajar pemrograman"
                     >
                         <div class="glow"></div>
                         <div class="orbit"></div>
@@ -1132,22 +1132,22 @@
                         </div>
                         <div class="code one">
                             <div class="dots"><i></i><i></i><i></i></div>
-                            <span class="pink">function</span>
-                            <span class="blue">buildFuture</span>() {<br />&nbsp;
-                            <span class="pink">return</span>
-                            <span class="green">"awesome!"</span>;<br />}
+                            <span class="pink">fungsi</span>
+                            <span class="blue">ciptakanMasaDepan</span>() {<br />&nbsp;
+                            <span class="pink">hasilkan</span>
+                            <span class="green">"hebat!"</span>;<br />}
                             <span class="cursor"></span>
                         </div>
                         <div class="code two">
                             <div class="dots"><i></i><i></i><i></i></div>
                             <span class="blue">robot</span>.<span class="yellow"
-                                >move</span
+                                >bergerak</span
                             >(<span class="green">100</span>);<br /><span
                                 class="blue"
                                 >robot</span
-                            >.<span class="yellow">say</span>(<span
+                            >.<span class="yellow">ucapkan</span>(<span
                                 class="green"
-                                >"Hello!"</span
+                                >"Halo!"</span
                             >);
                         </div>
                     </div>
@@ -1177,9 +1177,9 @@
                                     />
                                 </svg>
                             </div>
-                            <h3>Creative Coding</h3>
+                            <h3>Pemrograman Kreatif</h3>
                             <p>
-                                Belajar logika dan membuat game, animasi, serta
+                                Belajar logika dan membuat permainan, animasi, serta
                                 aplikasi seru dari nol.
                             </p>
                             <div class="meta">
@@ -1207,10 +1207,10 @@
                                     />
                                 </svg>
                             </div>
-                            <h3>Robotics Lab</h3>
+                            <h3>Laboratorium Robotika</h3>
                             <p>
                                 Merakit, memprogram, dan menghidupkan robot
-                                sambil memahami dunia engineering.
+                                sambil memahami dunia rekayasa.
                             </p>
                             <div class="meta">
                                 <span>Usia 8–17 tahun</span
@@ -1230,7 +1230,7 @@
                                     />
                                 </svg>
                             </div>
-                            <h3>AI & Digital Creator</h3>
+                            <h3>Kecerdasan Buatan dan Karya Digital</h3>
                             <p>
                                 Eksplorasi kecerdasan buatan dan ciptakan karya
                                 digital yang relevan dengan masa depan.
@@ -1247,18 +1247,18 @@
                 <div class="container why-grid">
                     <div class="lab reveal">
                         <div class="laptop">
-                            <span class="pink">const</span> future = {<br />&nbsp;skills:
-                            [<span class="green">'coding'</span>,
-                            <span class="green">'robotics'</span
-                            >],<br />&nbsp;mindset:
-                            <span class="green">'creator'</span
-                            >,<br />&nbsp;potential:
-                            <span class="blue">Infinity</span
-                            ><br />};<br /><span class="blue">create</span
-                            >(future); <span class="cursor"></span>
+                            <span class="pink">rencana</span> masaDepan = {<br />&nbsp;keterampilan:
+                            [<span class="green">'pemrograman'</span>,
+                            <span class="green">'robotika'</span
+                            >],<br />&nbsp;polaPikir:
+                            <span class="green">'pencipta'</span
+                            >,<br />&nbsp;potensi:
+                            <span class="blue">tanpaBatas</span
+                            ><br />};<br /><span class="blue">ciptakan</span
+                            >(masaDepan); <span class="cursor"></span>
                         </div>
                         <div class="done">
-                            <span>✓</span> Project completed!
+                            <span>✓</span> Proyek selesai!
                         </div>
                     </div>
                     <div class="why reveal">
@@ -1279,28 +1279,28 @@
                                 <div>
                                     <h4>Berbasis proyek</h4>
                                     <p>
-                                        Setiap level menghasilkan karya nyata.
+                                        Setiap tingkat menghasilkan karya nyata.
                                     </p>
                                 </div>
                             </div>
                             <div class="feature">
                                 <span class="check">✓</span>
                                 <div>
-                                    <h4>Mentor berpengalaman</h4>
+                                    <h4>Pengajar berpengalaman</h4>
                                     <p>Pendampingan hangat di kelas kecil.</p>
                                 </div>
                             </div>
                             <div class="feature">
                                 <span class="check">✓</span>
                                 <div>
-                                    <h4>Sesuai level</h4>
+                                    <h4>Sesuai kemampuan</h4>
                                     <p>Materi bertahap sesuai kemampuan.</p>
                                 </div>
                             </div>
                             <div class="feature">
                                 <span class="check">✓</span>
                                 <div>
-                                    <h4>Komunitas kreator</h4>
+                                    <h4>Komunitas berkarya</h4>
                                     <p>Lingkungan positif untuk bertumbuh.</p>
                                 </div>
                             </div>
@@ -1323,7 +1323,7 @@
                             <div class="num">01</div>
                             <h3>Temukan minat</h3>
                             <p>
-                                Konsultasi dan trial class untuk menemukan
+                                Konsultasi dan kelas percobaan untuk menemukan
                                 program terbaik.
                             </p>
                         </div>
@@ -1337,11 +1337,11 @@
                         <div class="step reveal">
                             <div class="num">03</div>
                             <h3>Buat proyek</h3>
-                            <p>Praktik membuat game, aplikasi, atau robot.</p>
+                            <p>Praktik membuat permainan, aplikasi, atau robot.</p>
                         </div>
                         <div class="step reveal">
                             <div class="num">04</div>
-                            <h3>Showcase karya</h3>
+                            <h3>Tampilkan karya</h3>
                             <p>
                                 Presentasikan hasil dan rayakan setiap kemajuan.
                             </p>
@@ -1362,8 +1362,8 @@
                             </div>
                             <a
                                 class="btn"
-                                href="https://wa.me/6281234567890?text=Halo%20JM%20Academy%2C%20saya%20ingin%20mendaftar%20trial%20class"
-                                >Daftar Trial Gratis →</a
+                                href="https://wa.me/6281234567890?text=Halo%20JM%20Academy%2C%20saya%20ingin%20mendaftar%20kelas%20percobaan"
+                                >Daftar Kelas Percobaan Gratis →</a
                             >
                         </div>
                     </div>
@@ -1388,10 +1388,10 @@
                                 fill="white"
                             /></svg></span
                     ><span
-                        >JM Academy<small>CODE • CREATE • INNOVATE</small></span
+                        >JM Academy<small>BELAJAR • BERKARYA • BERINOVASI</small></span
                     ></a
                 ><span
-                    >© {{ date('Y') }} JM Academy. All rights reserved.</span
+                    >© {{ date('Y') }} JM Academy. Hak cipta dilindungi.</span
                 >
                 <div class="footlinks">
                     <a href="#program">Program</a

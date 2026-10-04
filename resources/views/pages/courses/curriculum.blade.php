@@ -44,12 +44,12 @@
         .lesson-form {
             display: grid;
             gap: 10px;
-            grid-template-columns: minmax(240px, 1fr) 110px minmax(180px, 220px) 90px auto;
+            grid-template-columns: minmax(240px, 1fr) 110px 90px auto;
         }
 
         @media (max-width: 991px) {
             .lesson-form {
-                grid-template-columns: 1fr 110px minmax(180px, 1fr);
+                grid-template-columns: 1fr 110px 90px;
             }
         }
 
@@ -209,8 +209,7 @@
 
                     <span class="text-nowrap">
                         <span class="text-muted small mr-3">
-                            {{ $lesson->meetings }} pertemuan ·
-                            Rp {{ number_format($lesson->fee_per_meeting, 0, ',', '.') }}/pertemuan
+                            {{ $lesson->meetings }} pertemuan
                         </span>
 
                         <button
@@ -266,26 +265,6 @@
                         aria-label="Jumlah pertemuan"
                         required
                     >
-
-                    <div class="input-group">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text">Rp</span>
-                        </div>
-
-                        <input
-                            type="number"
-                            name="fee_per_meeting"
-                            min="0"
-                            max="999999999"
-                            step="1"
-                            value="{{ old('fee_per_meeting') }}"
-                            class="form-control"
-                            placeholder="Biaya/pertemuan"
-                            title="Biaya setiap pertemuan"
-                            aria-label="Biaya setiap pertemuan"
-                            required
-                        >
-                    </div>
 
                     <input
                         type="number"

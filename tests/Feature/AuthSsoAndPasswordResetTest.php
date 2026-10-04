@@ -44,27 +44,26 @@ class AuthSsoAndPasswordResetTest extends TestCase
         $this->assertTrue(Hash::check('PasswordBaru123!', $user->fresh()->password));
     }
 
-    public function test_google_registration_creates_user_with_selected_role(): void
+    public function test_google_cannot_create_an_account_even_with_a_registration_role(): void
     {
         Role::findOrCreate('student');
         $this->mockGoogleUser('google-123', 'google@example.com', 'Google Student');
 
         $this->withSession(['google_registration_role' => 'student'])
             ->get(route('google.callback'))
-            ->assertRedirect(route('home'));
+            ->assertRedirect(route('register'))
+            ->assertSessionHasErrors('google');
 
-        $user = User::where('email', 'google@example.com')->firstOrFail();
-        $this->assertSame('google-123', $user->google_id);
-        $this->assertTrue($user->hasRole('student'));
-        $this->assertAuthenticatedAs($user);
+        $this->assertDatabaseMissing('users', ['email' => 'google@example.com']);
+        $this->assertGuest();
     }
 
     public function test_google_login_links_an_existing_account_by_verified_email(): void
     {
         Role::findOrCreate('guru');
-        $user = User::factory()->create(['email' => 'guru-google@example.com']);
+        $user = User::factory()->create(['email' => 'Guru-Google@example.com']);
         $user->assignRole('guru');
-        $this->mockGoogleUser('google-guru', $user->email, 'Guru Google');
+        $this->mockGoogleUser('google-guru', strtolower($user->email), 'Guru Google');
 
         $this->get(route('google.callback'))->assertRedirect(route('home'));
 
@@ -73,9 +72,43 @@ class AuthSsoAndPasswordResetTest extends TestCase
         $this->assertTrue($user->fresh()->hasRole('guru'));
     }
 
-    private function mockGoogleUser(string $id, string $email, string $name): void
+    public function test_unverified_google_email_cannot_link_an_account(): void
     {
-        $googleUser = (new GoogleUser())->map([
+        $user = User::factory()->create(['email' => 'unverified@example.com']);
+        $this->mockGoogleUser('unverified-google', $user->email, 'Unverified', false);
+        $this->get(route('google.callback'))->assertRedirect(route('login'))->assertSessionHasErrors('google');
+        $this->assertGuest();
+        $this->assertNull($user->fresh()->google_id);
+    }
+
+    public function test_registration_has_no_google_signup_buttons(): void
+    {
+        $this->get(route('register'))->assertOk()
+            ->assertDontSee('Google sebagai Guru')
+            ->assertDontSee('Google sebagai Student')
+            ->assertSee('alamat email aktif');
+    }
+
+    public function test_registration_normalizes_email_and_rejects_invalid_email(): void
+    {
+        Role::findOrCreate('student');
+        $action = app(\App\Actions\Fortify\CreateNewUser::class);
+        $data = [
+            'name' => 'Siswa', 'email' => '  Siswa.Google@Gmail.com  ',
+            'password' => 'PasswordBaru123!', 'password_confirmation' => 'PasswordBaru123!',
+            'role' => 'student', 'phone' => '081234567890', 'address' => 'Jakarta',
+        ];
+        $user = $action->create($data);
+        $this->assertSame('siswa.google@gmail.com', $user->email);
+        $this->assertNull($user->email_verified_at);
+
+        $this->expectException(\Illuminate\Validation\ValidationException::class);
+        $action->create([...$data, 'email' => 'alamat-bukan-email']);
+    }
+
+    private function mockGoogleUser(string $id, string $email, string $name, bool $verified = true): void
+    {
+        $googleUser = (new GoogleUser())->setRaw(['email_verified' => $verified])->map([
             'id' => $id, 'email' => $email, 'name' => $name,
             'avatar' => 'https://example.com/avatar.jpg',
         ]);

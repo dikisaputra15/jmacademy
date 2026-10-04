@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\ClassCategory;
 use App\Models\Course;
 use App\Models\CourseCategory;
 use App\Models\CurriculumLesson;
@@ -92,27 +93,36 @@ class StudentCourseTest extends TestCase
         $this->actingAs($student)
             ->get(route('student-courses.payment', $course))
             ->assertOk()
-            ->assertSee('Rp 250.000')
+            ->assertSee('Kategori Kelas')
             ->assertSee('Upload bukti transfer');
 
+        $classCategory = ClassCategory::firstOrFail();
+        $classCategory->update(['fee_per_meeting' => 125000]);
         $paymentData = [
+            'class_category_id' => $classCategory->id,
             'sender_name' => 'Student Test',
             'sender_bank' => 'BCA',
             'transfer_date' => now()->toDateString(),
             'payment_proof' => UploadedFile::fake()->image('transfer.jpg'),
         ];
+        $this->actingAs($student)->post(route('student-courses.enroll', $course), array_diff_key($paymentData, ['class_category_id' => true]))->assertSessionHasErrors('class_category_id');
+        $this->actingAs($student)->post(route('student-courses.enroll', $course), [...$paymentData, 'class_category_id' => ClassCategory::whereNull('fee_per_meeting')->firstOrFail()->id])->assertSessionHasErrors('class_category_id');
+        $this->assertDatabaseCount('course_student', 0);
         $this->actingAs($student)
-            ->post(route('student-courses.enroll', $course), $paymentData)
+            ->post(route('student-courses.enroll', $course), [...$paymentData, 'amount' => 1])
             ->assertRedirect(route('student-transactions.index'));
+        $classCategory->update(['fee_per_meeting' => 150000]);
         $this->actingAs($student)->post(route('student-courses.enroll', $course), [
             ...$paymentData,
             'payment_proof' => UploadedFile::fake()->image('transfer-again.jpg'),
         ])->assertRedirect(route('student-transactions.index'));
 
         $this->assertDatabaseCount('course_student', 2);
+        $this->assertDatabaseHas('course_student', ['course_id' => $course->id, 'amount' => 300000]);
         $payment = $student->courseTransactions()->firstOrFail();
         $this->assertSame(250000, $payment->amount);
         $this->assertSame('pending', $payment->payment_status);
+        $this->assertSame($classCategory->id, $payment->class_category_id);
         Storage::disk('local')->assertExists($payment->payment_proof_path);
         $this->actingAs($student)
             ->get(route('student-courses.index'))

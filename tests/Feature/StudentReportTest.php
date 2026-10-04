@@ -42,7 +42,14 @@ class StudentReportTest extends TestCase
             ->assertSee('Sangat baik dalam menyelesaikan project.');
         $this->actingAs($student)->get(route('student-reports.certificate', $report))
             ->assertOk()->assertSee('Sertifikat')->assertSee('Student Report')
-            ->assertSee('Python Complete')->assertSee('CERT-'.now()->format('Y'));
+            ->assertSee('Python Complete')->assertSee('CERT-'.now()->format('Y'))
+            ->assertSee('QR code halaman sertifikat')
+            ->assertSee('data:image/svg+xml;base64,', false)
+            ->assertViewHas('certificateUrl', route('student-reports.certificate', $report))
+            ->assertViewHas('certificateQr', fn ($qr) => str_contains(
+                base64_decode(substr($qr, strlen('data:image/svg+xml;base64,'))),
+                '<svg'
+            ));
 
         $this->actingAs($otherStudent)->get(route('student-reports.show', $report))->assertNotFound();
         $this->actingAs($otherStudent)->get(route('student-reports.certificate', $report))->assertNotFound();

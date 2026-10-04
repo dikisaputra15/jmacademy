@@ -12,6 +12,12 @@
             </a>
           </li>
           @role('admin')
+          <li class="nav-item {{ request()->routeIs('class-categories.*') ? 'active' : '' }}">
+            <a class="nav-link" href="{{ route('class-categories.index') }}">
+              <i class="icon-grid-2 menu-icon"></i>
+              <span class="menu-title">Category Kelas</span>
+            </a>
+          </li>
           <li class="nav-item">
             <a class="nav-link" href="{{ route('users.index') }}">
               <i class="icon-head menu-icon"></i>
@@ -54,7 +60,7 @@
                 </div>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="">
+                <a class="nav-link" href="{{ route('admin-teacher-salaries.index') }}">
                 <i class="icon-grid-2 menu-icon"></i>
                 <span class="menu-title">Gaji Guru</span>
                 </a>

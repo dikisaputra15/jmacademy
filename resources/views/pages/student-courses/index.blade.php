@@ -72,6 +72,7 @@
                         <span class="badge badge-light">{{ $course->category->name }}</span>
                     </div>
                     <h4 class="mb-1">{{ $course->name }}</h4>
+
                     @if ($course->age_min || $course->age_max)
                         <small>Usia {{ $course->age_min ?? '?' }}–{{ $course->age_max ?? '?' }} tahun</small>
                     @endif
@@ -83,15 +84,7 @@
                         <span><i class="ti-book mr-1"></i> {{ $lessonTotal }} lesson</span>
                         <span><i class="ti-time mr-1"></i> {{ $meetingTotal }} pertemuan</span>
                     </div>
-                    <div class="small mb-3">
-                        <strong>Guru:</strong>
-                        @forelse ($course->teachers as $teacher)
-                            <span class="badge badge-info ml-1">{{ $teacher->name }}</span>
-                        @empty
-                            <span class="text-muted">Belum ditentukan</span>
-                        @endforelse
-                    </div>
-                    <div class="d-flex flex-wrap justify-content-between align-items-center border-top pt-3 mb-3">
+                    <div class="d-flex flex-wrap justify-content-between align-items-center pt-3 mb-3">
                         <div class="mr-3 mb-2">
                             <small class="text-muted d-block">Total biaya course</small>
                             <span class="course-price">Rp {{ number_format($courseTotal, 0, ',', '.') }}</span>

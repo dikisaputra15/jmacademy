@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
 #[Fillable([
-    'course_id', 'user_id', 'amount', 'sender_name', 'sender_bank',
+    'course_id', 'class_category_id', 'user_id', 'amount', 'sender_name', 'sender_bank',
     'transfer_date', 'payment_proof_path', 'payment_status',
     'verified_by', 'verified_at', 'verification_note',
 ])]
@@ -29,6 +29,11 @@ class CourseTransaction extends Model
     public function course(): BelongsTo
     {
         return $this->belongsTo(Course::class);
+    }
+
+    public function classCategory(): BelongsTo
+    {
+        return $this->belongsTo(ClassCategory::class);
     }
 
     public function student(): BelongsTo

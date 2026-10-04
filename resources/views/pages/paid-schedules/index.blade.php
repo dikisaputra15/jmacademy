@@ -20,7 +20,7 @@
 <div class="card schedule-form-card mb-4">
     <div class="card-body p-4">
         <h5 class="font-weight-bold mb-1">Buat Jadwal Training</h5>
-        <p class="text-muted mb-4">Materi dan guru mengikuti susunan course. Admin hanya menentukan waktu training dan link Zoom.</p>
+        <p class="text-muted mb-4">Materi mengikuti kurikulum course. Admin menentukan guru, waktu training, dan link Zoom setelah siswa registrasi dan pembayaran diverifikasi.</p>
 
         @if($paidTransactions->isEmpty())
             <div class="alert alert-info mb-0"><i class="ti-info-alt mr-1"></i> Belum ada pembayaran terverifikasi. Verifikasi pembayaran melalui menu Student Register terlebih dahulu.</div>
@@ -40,6 +40,17 @@
                             @endforeach
                         </select>
                     </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="teacher_id">Guru <span class="text-danger">*</span></label>
+                    <select id="teacher_id" name="teacher_id" class="form-control @error('teacher_id') is-invalid @enderror" required>
+                        <option value="">Pilih guru</option>
+                        @foreach($teachers as $teacher)
+                            <option value="{{ $teacher->id }}" @selected((int)old('teacher_id') === $teacher->id)>{{ $teacher->name }}</option>
+                        @endforeach
+                    </select>
+                    <small class="text-muted">Guru yang dipilih akan mengajar seluruh pertemuan yang disimpan pada form ini.</small>
                 </div>
 
                 <div id="course-assignment" class="alert alert-light border d-none"></div>
@@ -97,11 +108,7 @@
             slots.innerHTML = '<div class="text-muted text-center border rounded py-4">Pilih student dan course terlebih dahulu.</div>';
             return;
         }
-        if (!option.teacher) {
-            slots.innerHTML = '<div class="alert alert-warning mb-0">Course ini belum memiliki guru. Tetapkan guru pada menu Course terlebih dahulu.</div>';
-            return;
-        }
-        assignment.innerHTML = '<strong>Guru:</strong> '+escapeHtml(option.teacher.name)+' <span class="mx-2">·</span> <strong>Progress:</strong> '+option.scheduled+'/'+option.total+' pertemuan dijadwalkan';
+        assignment.innerHTML = '<strong>Progress:</strong> '+option.scheduled+'/'+option.total+' pertemuan dijadwalkan';
         assignment.classList.remove('d-none');
         if (!option.slots.length) {
             slots.innerHTML = '<div class="alert alert-success mb-0"><i class="ti-check mr-1"></i> Semua materi pada course ini sudah memiliki jadwal.</div>';

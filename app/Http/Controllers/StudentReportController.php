@@ -3,6 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\ParentReport;
+use BaconQrCode\Renderer\Image\SvgImageBackEnd;
+use BaconQrCode\Renderer\ImageRenderer;
+use BaconQrCode\Renderer\RendererStyle\RendererStyle;
+use BaconQrCode\Writer;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
@@ -37,7 +41,11 @@ class StudentReportController extends Controller
         $report->load(['student', 'teacher', 'course.category', 'transaction']);
 
 
-        return view('pages.student-reports.certificate', compact('report'));
+        $certificateUrl = route('student-reports.certificate', $report);
+        $writer = new Writer(new ImageRenderer(new RendererStyle(160), new SvgImageBackEnd()));
+        $certificateQr = 'data:image/svg+xml;base64,'.base64_encode($writer->writeString($certificateUrl));
+
+        return view('pages.student-reports.certificate', compact('report', 'certificateUrl', 'certificateQr'));
     }
 
     private function authorizeOwner(Request $request, ParentReport $report): void

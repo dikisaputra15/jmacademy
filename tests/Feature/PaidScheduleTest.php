@@ -17,9 +17,10 @@ class PaidScheduleTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_admin_can_schedule_paid_student_with_assigned_teacher(): void
+    public function test_admin_can_choose_teacher_after_registration_without_course_assignment(): void
     {
         [$admin, , $teacher, $transaction, $lesson] = $this->scheduleData('paid');
+        $transaction->course->teachers()->detach();
 
         $this->actingAs($admin)
             ->get(route('paid-schedules.index'))
@@ -29,6 +30,7 @@ class PaidScheduleTest extends TestCase
 
         $this->actingAs($admin)->post(route('paid-schedules.store'), [
             'course_transaction_id' => $transaction->id,
+            'teacher_id' => $teacher->id,
             'notes' => 'Training online',
             'schedules' => [
                 ['lesson_id' => $lesson->id, 'meeting_number' => 1, 'training_date' => now()->addDay()->toDateString(), 'start_time' => '09:00', 'end_time' => '10:00', 'zoom_url' => 'https://zoom.us/j/123456'],
@@ -50,10 +52,11 @@ class PaidScheduleTest extends TestCase
 
     public function test_pending_payment_cannot_be_scheduled(): void
     {
-        [$admin, , , $transaction, $lesson] = $this->scheduleData('pending');
+        [$admin, , $teacher, $transaction, $lesson] = $this->scheduleData('pending');
 
         $this->actingAs($admin)->post(route('paid-schedules.store'), [
             'course_transaction_id' => $transaction->id,
+            'teacher_id' => $teacher->id,
             'schedules' => [[
                 'lesson_id' => $lesson->id,
                 'meeting_number' => 1,
@@ -67,13 +70,14 @@ class PaidScheduleTest extends TestCase
         $this->assertDatabaseCount('paid_schedules', 0);
     }
 
-    public function test_course_without_assigned_teacher_cannot_be_scheduled(): void
+    public function test_admin_cannot_assign_a_student_as_teacher(): void
     {
         [$admin, , $teacher, $transaction, $lesson] = $this->scheduleData('paid');
-        $transaction->course->teachers()->detach($teacher);
+        $teacher = $transaction->student;
 
         $this->actingAs($admin)->post(route('paid-schedules.store'), [
             'course_transaction_id' => $transaction->id,
+            'teacher_id' => $teacher->id,
             'schedules' => [[
                 'lesson_id' => $lesson->id,
                 'meeting_number' => 1,
@@ -81,7 +85,9 @@ class PaidScheduleTest extends TestCase
                 'start_time' => '09:00', 'end_time' => '10:00',
                 'zoom_url' => 'https://zoom.us/j/123456',
             ]],
-        ])->assertSessionHasErrors('course_transaction_id');
+        ])->assertSessionHasErrors('teacher_id');
+
+        $this->assertDatabaseCount('paid_schedules', 0);
     }
 
     public function test_teacher_only_sees_paid_schedules_assigned_to_them(): void

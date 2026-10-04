@@ -14,7 +14,7 @@ class CurriculumTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_admin_can_add_lesson_with_fee_per_meeting(): void
+    public function test_admin_can_add_lesson_without_fee_per_meeting(): void
     {
         Role::create(['name' => 'admin']);
         $admin = User::factory()->create(['is_active' => true]);
@@ -40,7 +40,6 @@ class CurriculumTest extends TestCase
             ->post(route('curriculum.lessons.store', $section), [
                 'title' => 'Game Logic',
                 'meetings' => 2,
-                'fee_per_meeting' => 150000,
                 'sort_order' => 1,
             ])
             ->assertRedirect()
@@ -50,16 +49,18 @@ class CurriculumTest extends TestCase
             'curriculum_section_id' => $section->id,
             'title' => 'Game Logic',
             'meetings' => 2,
-            'fee_per_meeting' => 150000,
+            'fee_per_meeting' => 0,
         ]);
 
         $this->actingAs($admin)
             ->get(route('courses.curriculum', $course))
             ->assertOk()
-            ->assertSee('Rp 150.000/pertemuan');
+            ->assertSee('Game Logic')
+            ->assertDontSee('name="fee_per_meeting"', false)
+            ->assertDontSee('Rp ');
     }
 
-    public function test_fee_per_meeting_is_required_and_cannot_be_negative(): void
+    public function test_lesson_creation_ignores_submitted_fee_per_meeting(): void
     {
         Role::create(['name' => 'admin']);
         $admin = User::factory()->create(['is_active' => true]);
@@ -90,6 +91,12 @@ class CurriculumTest extends TestCase
                 'sort_order' => 1,
             ])
             ->assertRedirect(route('courses.curriculum', $course))
-            ->assertSessionHasErrors('fee_per_meeting');
+            ->assertSessionHasNoErrors();
+
+        $this->assertDatabaseHas('curriculum_lessons', [
+            'curriculum_section_id' => $section->id,
+            'title' => 'Game Logic',
+            'fee_per_meeting' => 0,
+        ]);
     }
 }

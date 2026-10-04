@@ -94,8 +94,11 @@ Route::middleware(['auth', 'active', 'role:guru'])->group(function () {
 });
 
 Route::middleware(['auth', 'active', 'role:admin'])->group(function () {
+    Route::get('/class-categories', [\App\Http\Controllers\ClassCategoryController::class, 'index'])->name('class-categories.index');
+    Route::put('/class-categories/{classCategory}', [\App\Http\Controllers\ClassCategoryController::class, 'update'])->name('class-categories.update');
     Route::get('/teacher-salaries', [AdminTeacherSalaryController::class, 'index'])->name('admin-teacher-salaries.index');
     Route::get('/teacher-salaries/payouts/{payout}/proof', [AdminTeacherSalaryController::class, 'proof'])->name('admin-teacher-salaries.proof');
+    Route::get('/teacher-salaries/report', [AdminTeacherSalaryController::class, 'report'])->name('admin-teacher-salaries.report');
     Route::get('/teacher-salaries/{teacher}', [AdminTeacherSalaryController::class, 'create'])->name('admin-teacher-salaries.create');
     Route::post('/teacher-salaries/{teacher}', [AdminTeacherSalaryController::class, 'store'])->name('admin-teacher-salaries.store');
     Route::get('/paid-schedules', [PaidScheduleController::class, 'index'])->name('paid-schedules.index');

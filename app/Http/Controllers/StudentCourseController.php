@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ClassCategory;
 use App\Models\Course;
 use App\Models\CourseCategory;
 use App\Models\CourseTransaction;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
+use Illuminate\Validation\Rule;
 
 class StudentCourseController extends Controller
 {
@@ -23,7 +25,7 @@ class StudentCourseController extends Controller
             ->get();
 
         $courses = Course::query()
-            ->with(['category', 'teachers', 'sections.lessons'])
+            ->with(['category', 'sections.lessons'])
             ->where('is_active', true)
             ->whereHas('category', fn ($query) => $query->where('is_active', true))
             ->when($categoryId, fn ($query) => $query->where('course_category_id', $categoryId))
@@ -50,7 +52,8 @@ class StudentCourseController extends Controller
 
         return view('pages.student-courses.payment', [
             'course' => $course,
-            'courseTotal' => $this->courseTotal($course),
+            'classCategories' => ClassCategory::orderBy('id')->get(),
+            'meetingTotal' => $course->sections->sum(fn ($section) => $section->lessons->sum('meetings')),
         ]);
     }
 
@@ -59,23 +62,28 @@ class StudentCourseController extends Controller
         $this->ensureCourseIsAvailable($course);
 
         $validated = $request->validate([
+            'class_category_id' => ['required', 'integer', Rule::exists('class_categories', 'id')->whereNotNull('fee_per_meeting')],
             'sender_name' => ['required', 'string', 'max:255'],
             'sender_bank' => ['required', 'string', 'max:100'],
             'transfer_date' => ['required', 'date', 'before_or_equal:today'],
             'payment_proof' => ['required', 'file', 'mimes:jpg,jpeg,png,pdf', 'max:2048'],
         ], [
+            'class_category_id.required' => 'Pilih kategori kelas terlebih dahulu.',
+            'class_category_id.exists' => 'Kategori kelas belum tersedia untuk dipesan.',
             'payment_proof.required' => 'Bukti transfer wajib diunggah.',
             'payment_proof.mimes' => 'Bukti transfer harus berupa JPG, JPEG, PNG, atau PDF.',
             'payment_proof.max' => 'Ukuran bukti transfer maksimal 2 MB.',
         ]);
 
         $course->load('sections.lessons');
+        $classCategory = ClassCategory::findOrFail($validated['class_category_id']);
         $proofPath = $request->file('payment_proof')->store('payment-proofs');
 
         CourseTransaction::create([
             'course_id' => $course->id,
             'user_id' => $request->user()->id,
-            'amount' => $this->courseTotal($course),
+            'class_category_id' => $classCategory->id,
+            'amount' => $course->sections->sum(fn ($section) => $section->lessons->sum('meetings')) * $classCategory->fee_per_meeting,
             'sender_name' => $validated['sender_name'],
             'sender_bank' => $validated['sender_bank'],
             'transfer_date' => $validated['transfer_date'],
@@ -91,7 +99,7 @@ class StudentCourseController extends Controller
     public function transactions(Request $request): View
     {
         $transactions = $request->user()->courseTransactions()
-            ->with('course.category')
+            ->with(['course.category', 'classCategory'])
             ->latest()
             ->paginate(10);
 
@@ -103,12 +111,4 @@ class StudentCourseController extends Controller
         abort_unless($course->is_active && $course->category()->where('is_active', true)->exists(), 404);
     }
 
-    private function courseTotal(Course $course): int
-    {
-        return (int) $course->sections->sum(
-            fn ($section) => $section->lessons->sum(
-                fn ($lesson) => $lesson->meetings * $lesson->fee_per_meeting
-            )
-        );
-    }
 }

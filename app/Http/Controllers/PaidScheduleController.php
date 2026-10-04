@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\CourseTransaction;
 use App\Models\PaidSchedule;
+use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -17,7 +18,7 @@ class PaidScheduleController extends Controller
         $search = trim((string) $request->query('search'));
 
         $paidTransactions = CourseTransaction::query()
-            ->with(['student', 'course.teachers', 'course.sections.lessons', 'paidSchedules'])
+            ->with(['student', 'course.sections.lessons', 'paidSchedules'])
             ->withCount('paidSchedules')
             ->where('payment_status', 'paid')
             ->latest('verified_at')
@@ -47,7 +48,6 @@ class PaidScheduleController extends Controller
             }
 
             return [$transaction->id => [
-                'teacher' => $transaction->course->teachers->first()?->only(['id', 'name']),
                 'slots' => $slots->values(),
                 'total' => $transaction->course->sections->sum(
                     fn ($section) => $section->lessons->sum('meetings')
@@ -55,6 +55,8 @@ class PaidScheduleController extends Controller
                 'scheduled' => $transaction->paid_schedules_count,
             ]];
         });
+
+        $teachers = User::role('guru')->orderBy('name')->get(['id', 'name']);
 
         $schedules = PaidSchedule::query()
             ->with(['transaction.student', 'transaction.course.category', 'teacher', 'lesson.section'])
@@ -76,7 +78,7 @@ class PaidScheduleController extends Controller
             ->withQueryString();
 
         return view('pages.paid-schedules.index', compact(
-            'paidTransactions', 'scheduleOptions', 'schedules', 'search'
+            'paidTransactions', 'scheduleOptions', 'schedules', 'search', 'teachers'
         ));
     }
 
@@ -84,6 +86,7 @@ class PaidScheduleController extends Controller
     {
         $validated = $request->validate([
             'course_transaction_id' => ['required', 'integer', 'exists:course_student,id'],
+            'teacher_id' => ['required', 'integer', 'exists:users,id'],
             'notes' => ['nullable', 'string', 'max:1000'],
             'schedules' => ['required', 'array', 'min:1', 'max:100'],
             'schedules.*.lesson_id' => ['required', 'integer', 'exists:curriculum_lessons,id'],
@@ -95,15 +98,15 @@ class PaidScheduleController extends Controller
         ]);
 
         $transaction = CourseTransaction::query()
-            ->with(['course.teachers', 'course.sections.lessons'])
+            ->with(['course.sections.lessons'])
             ->where('payment_status', 'paid')
             ->findOrFail($validated['course_transaction_id']);
 
-        $teacher = $transaction->course->teachers->first();
+        $teacher = User::role('guru')->find($validated['teacher_id']);
 
         if (! $teacher) {
             throw ValidationException::withMessages([
-                'course_transaction_id' => 'Course ini belum memiliki guru yang ditugaskan.',
+                'teacher_id' => 'Pengajar yang dipilih harus memiliki role guru.',
             ]);
         }
 

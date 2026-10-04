@@ -34,7 +34,7 @@
                         @endphp
                         <tr>
                             <td><span class="transaction-code">TRX-{{ str_pad($transaction->id, 6, '0', STR_PAD_LEFT) }}</span></td>
-                            <td><strong class="d-block">{{ $transaction->course->name }}</strong><small class="text-muted">{{ $transaction->course->category->name }} · {{ $transaction->course->code }}</small></td>
+                            <td><strong class="d-block">{{ $transaction->course->name }}</strong><small class="text-muted">{{ $transaction->course->category->name }} · {{ $transaction->course->code }}</small>@if($transaction->classCategory)<small class="d-block text-muted">{{ $transaction->classCategory->name }}</small>@endif</td>
                             <td><strong class="d-block">{{ $transaction->sender_name }}</strong><small class="text-muted">{{ $transaction->sender_bank }} · {{ $transaction->transfer_date?->format('d M Y') }}</small></td>
                             <td><span class="text-nowrap">{{ $transaction->created_at->format('d M Y') }}</span><small class="text-muted d-block">{{ $transaction->created_at->format('H:i') }}</small></td>
                             <td><span class="transaction-amount">Rp {{ number_format($transaction->amount, 0, ',', '.') }}</span></td>

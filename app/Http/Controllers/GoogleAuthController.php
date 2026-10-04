@@ -6,8 +6,6 @@ use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Laravel\Socialite\Facades\Socialite;
 use Throwable;
@@ -17,12 +15,11 @@ class GoogleAuthController extends Controller
     public function redirect(Request $request): RedirectResponse
     {
         if (! $this->isConfigured()) {
-            return to_route($request->filled('role') ? 'register' : 'login')
+            return to_route('login')
                 ->withErrors(['google' => 'Google SSO belum dikonfigurasi oleh administrator.']);
         }
 
-        $role = $request->string('role')->toString();
-        session(['google_registration_role' => in_array($role, ['guru', 'student'], true) ? $role : null]);
+        session()->forget('google_registration_role');
 
         return Socialite::driver('google')->redirect();
     }
@@ -40,40 +37,33 @@ class GoogleAuthController extends Controller
             return to_route('login')->withErrors(['google' => 'Akun Google tidak memberikan alamat email.']);
         }
 
-        $user = User::where('google_id', $googleUser->getId())->orWhere('email', $email)->first();
-        if (! $user) {
-            $role = session()->pull('google_registration_role');
-            if (! in_array($role, ['guru', 'student'], true)) {
-                return to_route('register')->withErrors([
-                    'google' => 'Akun belum terdaftar. Pilih daftar sebagai Guru atau Student melalui Google.',
-                ]);
-            }
-
-            $user = DB::transaction(function () use ($googleUser, $email, $role) {
-                $user = User::create([
-                    'name' => $googleUser->getName() ?: Str::before($email, '@'),
-                    'email' => $email,
-                    'email_verified_at' => now(),
-                    'google_id' => $googleUser->getId(),
-                    'google_avatar' => $googleUser->getAvatar(),
-                    'password' => Hash::make(Str::random(48)),
-                ]);
-                $user->assignRole($role);
-
-                return $user;
-            });
-        } else {
-            if (! $user->is_active) {
-                return to_route('login')->withErrors(['email' => 'Akun Anda sedang dinonaktifkan.']);
-            }
-
-            $user->forceFill([
-                'google_id' => $googleUser->getId(),
-                'google_avatar' => $googleUser->getAvatar(),
-                'email_verified_at' => $user->email_verified_at ?: now(),
-            ])->save();
-            session()->forget('google_registration_role');
+        if (($googleUser->user['email_verified'] ?? false) !== true || ! filled($googleUser->getId())) {
+            return to_route('login')->withErrors(['google' => 'Alamat email akun Google belum terverifikasi.']);
         }
+
+        $user = User::where('google_id', $googleUser->getId())->first()
+            ?? User::whereRaw('LOWER(email) = ?', [$email])->first();
+
+        if (! $user) {
+            return to_route('register')->withErrors([
+                'google' => 'Akun belum terdaftar. Isi formulir pendaftaran menggunakan alamat email yang sama dengan akun Google Anda.',
+            ]);
+        }
+
+        if (! $user->is_active) {
+            return to_route('login')->withErrors(['email' => 'Akun Anda sedang dinonaktifkan.']);
+        }
+
+        if ($user->google_id && $user->google_id !== $googleUser->getId()) {
+            return to_route('login')->withErrors(['google' => 'Akun ini sudah terhubung dengan akun Google lain.']);
+        }
+
+        $user->forceFill([
+            'google_id' => $googleUser->getId(),
+            'google_avatar' => $googleUser->getAvatar(),
+            'email_verified_at' => $user->email_verified_at ?: now(),
+        ])->save();
+        session()->forget('google_registration_role');
 
         Auth::login($user, true);
         request()->session()->regenerate();

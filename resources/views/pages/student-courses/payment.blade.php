@@ -25,9 +25,10 @@
                 <div class="col-lg-5 payment-summary">
                     <span class="badge badge-light mb-3">{{ $course->code }}</span>
                     <h4>{{ $course->name }}</h4>
+
                     <p class="mb-4 text-white-50">{{ $course->category->name }}</p>
                     <small class="d-block text-white-50">Total yang harus ditransfer</small>
-                    <div class="payment-total">Rp {{ number_format($courseTotal, 0, ',', '.') }}</div>
+                    <div class="payment-total" id="payment-total">Pilih kategori kelas</div>
                     <hr class="border-light my-4">
                     <small>{{ $course->sections->sum(fn ($section) => $section->lessons->sum('meetings')) }} pertemuan</small>
                 </div>
@@ -42,11 +43,26 @@
 
                         <form method="POST" action="{{ route('student-courses.enroll', $course) }}" enctype="multipart/form-data">
                             @csrf
+                            <div class="form-group">
+                                <label for="class_category_id">Kategori Kelas</label>
+                                <select id="class_category_id" name="class_category_id" class="form-control" required>
+                                    <option value="">Pilih kategori kelas</option>
+                                    @foreach($classCategories as $classCategory)
+                                        <option value="{{ $classCategory->id }}" data-total="{{ $meetingTotal * $classCategory->fee_per_meeting }}" @selected((string) old('class_category_id') === (string) $classCategory->id) @disabled($classCategory->fee_per_meeting === null)>
+                                            {{ $classCategory->name }} ({{ $classCategory->capacity }} siswa) — {{ $classCategory->fee_per_meeting === null ? 'Biaya belum ditentukan' : 'Rp '.number_format($classCategory->fee_per_meeting, 0, ',', '.').'/pertemuan' }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                <small class="form-text text-muted">Total pembayaran sesuai tarif kategori × {{ $meetingTotal }} pertemuan.</small>
+                                @if(! $classCategories->contains(fn ($category) => $category->fee_per_meeting !== null))
+                                    <small class="text-warning">Kategori kelas belum tersedia. Silakan hubungi admin.</small>
+                                @endif
+                            </div>
                             <div class="form-group"><label for="sender_name">Nama pemilik rekening pengirim</label><input id="sender_name" name="sender_name" value="{{ old('sender_name', auth()->user()->name) }}" class="form-control" required></div>
                             <div class="form-group"><label for="sender_bank">Bank pengirim</label><input id="sender_bank" name="sender_bank" value="{{ old('sender_bank') }}" class="form-control" placeholder="Contoh: BCA, BRI, Mandiri" required></div>
                             <div class="form-group"><label for="transfer_date">Tanggal transfer</label><input id="transfer_date" type="date" name="transfer_date" value="{{ old('transfer_date', now()->toDateString()) }}" max="{{ now()->toDateString() }}" class="form-control" required></div>
                             <div class="form-group upload-box"><label for="payment_proof" class="font-weight-bold">Upload bukti transfer</label><input id="payment_proof" type="file" name="payment_proof" class="form-control-file" accept=".jpg,.jpeg,.png,.pdf" required><small class="form-text text-muted">Format JPG, JPEG, PNG, atau PDF. Maksimal 2 MB.</small></div>
-                            <button class="btn btn-primary btn-block"><i class="ti-upload mr-1"></i> Kirim Bukti Pembayaran</button>
+                            <button class="btn btn-primary btn-block" @disabled(! $classCategories->contains(fn ($category) => $category->fee_per_meeting !== null))><i class="ti-upload mr-1"></i> Kirim Bukti Pembayaran</button>
                         </form>
                     </div>
                 </div>
@@ -55,3 +71,17 @@
     </div>
 </div>
 @endsection
+
+@push('scripts')
+<script>
+    const categorySelect = document.getElementById('class_category_id');
+    const updatePaymentTotal = () => {
+        const option = categorySelect.selectedOptions[0];
+        document.getElementById('payment-total').textContent = categorySelect.value && !option.disabled
+            ? 'Rp ' + new Intl.NumberFormat('id-ID').format(Number(option.dataset.total))
+            : 'Pilih kategori kelas';
+    };
+    categorySelect.addEventListener('change', updatePaymentTotal);
+    updatePaymentTotal();
+</script>
+@endpush

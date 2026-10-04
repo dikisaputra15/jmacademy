@@ -17,6 +17,14 @@ class TeacherSalary extends Model
         return ['amount' => 'integer', 'earned_at' => 'datetime'];
     }
 
+    public function scopeForMonth($query, string $month)
+    {
+        $start = \Carbon\CarbonImmutable::createFromFormat('!Y-m', $month);
+
+        return $query->where('earned_at', '>=', $start)
+            ->where('earned_at', '<', $start->addMonth());
+    }
+
     public function report(): BelongsTo { return $this->belongsTo(LearningReport::class, 'learning_report_id'); }
     public function teacher(): BelongsTo { return $this->belongsTo(User::class, 'teacher_id'); }
     public function student(): BelongsTo { return $this->belongsTo(User::class, 'student_id'); }

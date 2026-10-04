@@ -22,24 +22,6 @@
                 <div class="alert alert-danger">{{ $errors->first('google') }}</div>
             @endif
 
-            <p class="text-muted">Daftar cepat menggunakan akun Google:</p>
-            <div class="row mb-4">
-                <div class="col-md-6 mb-2">
-                    <a href="{{ route('google.redirect', ['role' => 'guru']) }}" class="btn btn-outline-danger btn-block">
-                        <i class="mdi mdi-google mr-1"></i>
-                        Google sebagai Guru
-                    </a>
-                </div>
-                <div class="col-md-6 mb-2">
-                    <a href="{{ route('google.redirect', ['role' => 'student']) }}" class="btn btn-outline-danger btn-block">
-                        <i class="mdi mdi-google mr-1"></i>
-                        Google sebagai Student
-                    </a>
-                </div>
-            </div>
-
-            <div class="text-center text-muted mb-4">atau daftar menggunakan form</div>
-
             <form method="POST" action="{{ route('register') }}">
                 @csrf
 
@@ -68,10 +50,15 @@
                     <input type="email"
                            class="form-control form-control-lg"
                            name="email"
-                           placeholder="Email"
+                           placeholder="Alamat email"
+                           autocomplete="email"
+                           maxlength="255"
+                           aria-describedby="email-help"
                            value="{{ old('email') }}"
                            required>
                 </div>
+
+                <p id="email-help" class="small text-muted">Gunakan alamat email aktif yang sama dengan akun Google Anda agar dapat masuk melalui Google setelah mendaftar.</p>
 
                 <div class="form-group">
                     <div class="input-group">

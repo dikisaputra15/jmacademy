@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-#[Fillable(['course_category_id', 'name', 'code', 'age_min', 'age_max', 'description', 'is_active', 'sort_order'])]
+#[Fillable(['course_category_id', 'class_category_id', 'name', 'code', 'age_min', 'age_max', 'description', 'is_active', 'sort_order'])]
 class Course extends Model
 {
     use HasFactory;
@@ -22,6 +22,11 @@ class Course extends Model
     public function category(): BelongsTo
     {
         return $this->belongsTo(CourseCategory::class, 'course_category_id');
+    }
+
+    public function classCategory(): BelongsTo
+    {
+        return $this->belongsTo(ClassCategory::class);
     }
 
     public function sections(): HasMany
