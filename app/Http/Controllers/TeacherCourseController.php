@@ -24,9 +24,6 @@ class TeacherCourseController extends Controller
             ->with([
                 'category',
                 'sections.lessons',
-                'transactions' => fn ($query) => $query
-                    ->where('payment_status', 'paid')
-                    ->with('student'),
             ])
             ->whereHas('teachers', fn ($query) => $query->where('users.id', $teacherId))
             ->when($categoryId, fn ($query) => $query->where('course_category_id', $categoryId))

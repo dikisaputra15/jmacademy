@@ -41,6 +41,8 @@
     @endforeach
 </div>
 
+@include('pages.student-registrations._groups')
+
 <div class="card register-card">
     <div class="card-body border-bottom">
         <form method="GET" action="{{ route('student-registrations.index') }}" class="row align-items-end">

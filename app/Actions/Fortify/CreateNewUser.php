@@ -38,14 +38,11 @@ class CreateNewUser implements CreatesNewUsers
                 Rule::unique(User::class),
             ],
             'password' => $this->passwordRules(),
-            'role' => ['required', Rule::in(['guru', 'student']), Rule::exists('roles', 'name')],
             'phone' => ['required', 'string', 'regex:/^[0-9+()\-\s]{8,20}$/'],
             'address' => ['required', 'string', 'max:1000'],
         ], [
             'email.email' => 'Masukkan alamat email yang valid, misalnya nama@gmail.com.',
             'email.unique' => 'Alamat email ini sudah terdaftar. Silakan masuk.',
-            'role.required' => 'Silakan pilih daftar sebagai guru atau student.',
-            'role.in' => 'Role pendaftaran tidak valid.',
             'phone.regex' => 'Format nomor HP tidak valid.',
         ])->validate();
 
@@ -58,7 +55,7 @@ class CreateNewUser implements CreatesNewUsers
                 'password' => Hash::make($input['password']),
             ]);
 
-            $user->assignRole($input['role']);
+            $user->assignRole('student');
 
             return $user;
         });

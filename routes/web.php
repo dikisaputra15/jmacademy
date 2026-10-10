@@ -94,6 +94,7 @@ Route::middleware(['auth', 'active', 'role:guru'])->group(function () {
 });
 
 Route::middleware(['auth', 'active', 'role:admin'])->group(function () {
+    Route::post('/student-registrations/group-schedules', [\App\Http\Controllers\GroupScheduleController::class, 'store'])->name('student-registrations.group-schedules');
     Route::get('/class-categories', [\App\Http\Controllers\ClassCategoryController::class, 'index'])->name('class-categories.index');
     Route::put('/class-categories/{classCategory}', [\App\Http\Controllers\ClassCategoryController::class, 'update'])->name('class-categories.update');
     Route::post('/class-categories', [\App\Http\Controllers\ClassCategoryController::class, 'store'])->name('class-categories.store');
@@ -141,6 +142,7 @@ Route::middleware(['auth', 'active', 'role:admin'])->group(function () {
     Route::put('/curriculum/sections/{section}', [CurriculumController::class, 'updateSection'])->name('curriculum.sections.update');
     Route::delete('/curriculum/sections/{section}', [CurriculumController::class, 'destroySection'])->name('curriculum.sections.destroy');
     Route::post('/curriculum/sections/{section}/lessons', [CurriculumController::class, 'storeLesson'])->name('curriculum.lessons.store');
+    Route::put('/curriculum/lessons/{lesson}/resources', [CurriculumController::class, 'updateResources'])->name('curriculum.lessons.resources');
     Route::delete('/curriculum/lessons/{lesson}', [CurriculumController::class, 'destroyLesson'])->name('curriculum.lessons.destroy');
     Route::resource('/courses', CourseController::class)->except('show');
 });

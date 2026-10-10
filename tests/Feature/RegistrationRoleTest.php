@@ -16,7 +16,6 @@ class RegistrationRoleTest extends TestCase
         Role::create(['name' => 'student']);
 
         $this->post(route('register'), [
-            'role' => 'student',
             'name' => 'Student Baru',
             'email' => 'student.baru@example.com',
             'phone' => '081234567890',
@@ -31,9 +30,10 @@ class RegistrationRoleTest extends TestCase
         $this->assertSame('Jl. Pendidikan No. 1', $user->address);
     }
 
-    public function test_user_can_register_as_teacher(): void
+    public function test_submitted_teacher_role_still_registers_as_student(): void
     {
         Role::create(['name' => 'guru']);
+        Role::create(['name' => 'student']);
 
         $this->post(route('register'), [
             'role' => 'guru',
@@ -45,7 +45,8 @@ class RegistrationRoleTest extends TestCase
             'password_confirmation' => 'password123',
         ])->assertRedirect('/home');
 
-        $this->assertTrue(User::where('email', 'guru.baru@example.com')->firstOrFail()->hasRole('guru'));
+        $user = User::where('email', 'guru.baru@example.com')->firstOrFail();
+        $this->assertSame(['student'], $user->getRoleNames()->all());
     }
 
     public function test_public_registration_cannot_create_admin(): void
@@ -62,8 +63,9 @@ class RegistrationRoleTest extends TestCase
             'address' => 'Alamat',
             'password' => 'password123',
             'password_confirmation' => 'password123',
-        ])->assertSessionHasErrors('role');
+        ])->assertRedirect('/home');
 
-        $this->assertDatabaseMissing('users', ['email' => 'fake.admin@example.com']);
+        $user = User::where('email', 'fake.admin@example.com')->firstOrFail();
+        $this->assertSame(['student'], $user->getRoleNames()->all());
     }
 }

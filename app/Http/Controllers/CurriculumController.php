@@ -58,6 +58,15 @@ class CurriculumController extends Controller
         return back()->with('success', 'Lesson berhasil ditambahkan.');
     }
 
+    public function updateResources(Request $request, CurriculumLesson $lesson): RedirectResponse
+    {
+        $lesson->update($request->validate([
+            'resources' => ['nullable', 'string', 'max:20000'],
+        ]));
+
+        return back()->with('success', 'Link project dan modul berhasil disimpan.');
+    }
+
     public function destroyLesson(CurriculumLesson $lesson): RedirectResponse
     {
         $lesson->delete();

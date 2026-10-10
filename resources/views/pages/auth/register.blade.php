@@ -4,9 +4,7 @@
 
 @push('style')
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@6.9.96/css/materialdesignicons.min.css">
-<style>
-    .role-options{display:grid;gap:12px;grid-template-columns:1fr 1fr}.role-option{margin:0;position:relative}.role-option input{opacity:0;position:absolute}.role-card{border:2px solid #e2e5ed;border-radius:10px;cursor:pointer;display:block;padding:16px;text-align:center;transition:.2s}.role-card i{color:#6c757d;display:block;font-size:28px;margin-bottom:5px}.role-option input:checked + .role-card{background:#f0efff;border-color:#4b49ac;color:#4b49ac}.role-option input:checked + .role-card i{color:#4b49ac}.role-option input:focus + .role-card{box-shadow:0 0 0 .2rem rgba(75,73,172,.2)}
-</style>
+
 @endpush
 
 @section('main')
@@ -28,14 +26,6 @@
                 @if ($errors->any())
                     <div class="alert alert-danger"><strong>Pendaftaran belum berhasil.</strong><ul class="mb-0 mt-2 pl-3">@foreach($errors->all() as $error)<li>{{ $error }}</li>@endforeach</ul></div>
                 @endif
-
-                <div class="form-group">
-                    <label class="font-weight-bold d-block">Daftar Sebagai <span class="text-danger">*</span></label>
-                    <div class="role-options">
-                        <label class="role-option"><input type="radio" name="role" value="guru" @checked(old('role') === 'guru') required><span class="role-card"><i class="mdi mdi-teach"></i><strong>Guru</strong><small class="d-block text-muted">Mengajar course</small></span></label>
-                        <label class="role-option"><input type="radio" name="role" value="student" @checked(old('role') === 'student') required><span class="role-card"><i class="mdi mdi-school"></i><strong>Student</strong><small class="d-block text-muted">Mengikuti course</small></span></label>
-                    </div>
-                </div>
 
                 <div class="form-group">
                     <input type="text"

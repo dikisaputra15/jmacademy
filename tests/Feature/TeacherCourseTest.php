@@ -16,7 +16,7 @@ class TeacherCourseTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_teacher_only_sees_assigned_courses_with_curriculum_and_verified_students(): void
+    public function test_teacher_only_sees_assigned_courses_with_curriculum_without_student_list(): void
     {
         foreach (['admin', 'guru', 'student'] as $role) {
             Role::findOrCreate($role);
@@ -42,7 +42,8 @@ class TeacherCourseTest extends TestCase
             ->assertSee('Basic Python')
             ->assertSee('Fundamental')
             ->assertSee('Python Introduction')
-            ->assertSee('Student Verified')
+            ->assertDontSee('Student Verified')
+            ->assertDontSee('Student terverifikasi')
             ->assertDontSee('Secret Robotics');
     }
 

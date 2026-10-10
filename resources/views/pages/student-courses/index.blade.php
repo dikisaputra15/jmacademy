@@ -91,6 +91,7 @@
                 </div>
                 <div class="collapse" id="{{ $curriculumId }}">
                     <div class="card-body border-top pt-4">
+                        @php($meetingNumber = 1)
                         @forelse ($course->sections as $section)
                             <div class="curriculum-section">
                                 <div class="d-flex justify-content-between mb-2">
@@ -100,8 +101,10 @@
                                 @forelse ($section->lessons as $lesson)
                                     <div class="lesson-item">
                                         <span><span class="badge badge-light mr-1">{{ $loop->parent->iteration }}.{{ $loop->iteration }}</span> {{ $lesson->title }}</span>
-                                        <small class="text-muted ml-2 text-right">{{ $lesson->meetings }} pertemuan</small>
+                                        <small class="text-muted ml-2 text-right text-nowrap">Pertemuan {{ $meetingNumber }}@if($lesson->meetings > 1)–{{ $meetingNumber + $lesson->meetings - 1 }}@endif</small>
                                     </div>
+                                    @php($meetingNumber += $lesson->meetings)
+                                    <x-lesson-resources :lesson="$lesson" />
                                 @empty
                                     <small class="text-muted">Belum ada lesson.</small>
                                 @endforelse

@@ -21,7 +21,7 @@ class CourseController extends Controller
         $selectedCategory = $categories->firstWhere('id', $categoryId) ?? $categories->first();
 
         $courses = Course::query()
-            ->with(['category', 'teachers', 'sections.lessons'])
+            ->with(['category', 'sections.lessons'])
             ->when($selectedCategory, fn ($query) => $query->whereBelongsTo($selectedCategory, 'category'))
             ->orderBy('sort_order')
             ->orderBy('name')

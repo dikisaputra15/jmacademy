@@ -17,46 +17,7 @@ class PaidScheduleController extends Controller
     {
         $search = trim((string) $request->query('search'));
 
-        $paidTransactions = CourseTransaction::query()
-            ->with(['student', 'course.sections.lessons', 'paidSchedules'])
-            ->withCount('paidSchedules')
-            ->where('payment_status', 'paid')
-            ->latest('verified_at')
-            ->get();
-
-        $scheduleOptions = $paidTransactions->mapWithKeys(function (CourseTransaction $transaction) {
-            $scheduled = $transaction->paidSchedules
-                ->filter(fn (PaidSchedule $schedule) => $schedule->curriculum_lesson_id && $schedule->meeting_number)
-                ->mapWithKeys(fn (PaidSchedule $schedule) => [
-                    $schedule->curriculum_lesson_id.'-'.$schedule->meeting_number => true,
-                ]);
-            $slots = collect();
-
-            foreach ($transaction->course->sections as $section) {
-                foreach ($section->lessons as $lesson) {
-                    for ($meeting = 1; $meeting <= $lesson->meetings; $meeting++) {
-                        if (! $scheduled->has($lesson->id.'-'.$meeting)) {
-                            $slots->push([
-                                'lesson_id' => $lesson->id,
-                                'section' => $section->name,
-                                'lesson' => $lesson->title,
-                                'meeting_number' => $meeting,
-                            ]);
-                        }
-                    }
-                }
-            }
-
-            return [$transaction->id => [
-                'slots' => $slots->values(),
-                'total' => $transaction->course->sections->sum(
-                    fn ($section) => $section->lessons->sum('meetings')
-                ),
-                'scheduled' => $transaction->paid_schedules_count,
-            ]];
-        });
-
-        $teachers = User::role('guru')->orderBy('name')->get(['id', 'name']);
+        $paidTransactionCount = CourseTransaction::where('payment_status', 'paid')->count();
 
         $schedules = PaidSchedule::query()
             ->with(['transaction.student', 'transaction.course.category', 'teacher', 'lesson.section'])
@@ -72,13 +33,14 @@ class PaidScheduleController extends Controller
                             ->where('name', 'like', "%{$search}%"));
                 });
             })
-            ->orderBy('training_date')
-            ->orderBy('start_time')
+            ->orderByDesc('training_date')
+            ->orderByDesc('start_time')
+            ->orderByDesc('id')
             ->paginate(15)
             ->withQueryString();
 
         return view('pages.paid-schedules.index', compact(
-            'paidTransactions', 'scheduleOptions', 'schedules', 'search', 'teachers'
+            'paidTransactionCount', 'schedules', 'search'
         ));
     }
 
@@ -101,6 +63,12 @@ class PaidScheduleController extends Controller
             ->with(['course.sections.lessons'])
             ->where('payment_status', 'paid')
             ->findOrFail($validated['course_transaction_id']);
+
+        if (($transaction->classCategory?->capacity ?? 1) > 1) {
+            throw ValidationException::withMessages([
+                'course_transaction_id' => 'Jadwalkan kelas berkelompok melalui menu Student Register setelah kapasitas terpenuhi.',
+            ]);
+        }
 
         $teacher = User::role('guru')->find($validated['teacher_id']);
 

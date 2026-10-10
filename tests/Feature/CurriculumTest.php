@@ -58,6 +58,37 @@ class CurriculumTest extends TestCase
             ->assertSee('Game Logic')
             ->assertDontSee('name="fee_per_meeting"', false)
             ->assertDontSee('Rp ');
+
+        $lesson = $section->lessons()->firstOrFail();
+        $resources = '[Project](https://scratch.mit.edu/projects/123)'."\n\n".'[Modul](https://example.com/modul)';
+        $this->put(route('curriculum.lessons.resources', $lesson), ['resources' => $resources])
+            ->assertSessionHasNoErrors();
+        $this->assertSame($resources, $lesson->fresh()->resources);
+        $rendered = \Illuminate\Support\Facades\Blade::render('<x-lesson-resources :lesson="$lesson" />', ['lesson' => $lesson->fresh()]);
+        $this->assertStringContainsString('href="https://scratch.mit.edu/projects/123"', $rendered);
+        $lesson->resources = '<script>alert(1)</script> [bad](javascript:alert(1))';
+        $rendered = \Illuminate\Support\Facades\Blade::render('<x-lesson-resources :lesson="$lesson" />', ['lesson' => $lesson]);
+        $this->assertStringNotContainsString('<script>', $rendered);
+        $this->assertStringNotContainsString('href="javascript:', $rendered);
+        $this->put(route('curriculum.lessons.resources', $lesson), ['resources' => null])->assertSessionHasNoErrors();
+        $this->assertNull($lesson->fresh()->resources);
+        Role::findOrCreate('student');
+        $student = User::factory()->create();
+        $student->assignRole('student');
+        $this->actingAs($student)->put(route('curriculum.lessons.resources', $lesson), ['resources' => 'changed'])->assertForbidden();
+
+    }
+
+    public function test_visual_resources_preserve_formatting_and_remove_unsafe_html(): void
+    {
+        $html = \App\Support\LessonResources::render('<p style="text-align:center" onclick="alert(1)"><strong>Modul</strong> <a href="https://example.com/modul">Buka</a><a href="javascript:alert(1)">Bad</a><img src="x" onerror="alert(1)"><script>alert(1)</script></p>');
+        $this->assertStringContainsString('<strong>Modul</strong>', $html);
+        $this->assertStringContainsString('text-align:center', $html);
+        $this->assertStringContainsString('href="https://example.com/modul"', $html);
+        $this->assertStringNotContainsString('javascript:', $html);
+        $this->assertStringNotContainsString('onclick', $html);
+        $this->assertStringNotContainsString('<script', $html);
+        $this->assertStringNotContainsString('<img', $html);
     }
 
     public function test_lesson_creation_ignores_submitted_fee_per_meeting(): void

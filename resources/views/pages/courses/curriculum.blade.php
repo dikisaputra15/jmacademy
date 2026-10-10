@@ -232,6 +232,7 @@
                         </form>
                     </span>
                 </div>
+                <x-lesson-resource-editor :lesson="$lesson" />
             @empty
                 <div class="lesson-item text-muted">
                     Belum ada lesson pada section ini.

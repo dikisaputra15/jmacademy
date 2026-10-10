@@ -47,7 +47,23 @@ class StudentRegistrationController extends Controller
             ->paginate(15)
             ->withQueryString();
 
-        return view('pages.student-registrations.index', compact(
+        $waitingGroups = CourseTransaction::with(['student', 'classCategory', 'course.sections.lessons'])
+            ->where('payment_status', 'paid')->whereNotNull('class_category_id')
+            ->whereDoesntHave('paidSchedules')->orderBy('verified_at')->orderBy('id')->get()
+            ->groupBy(fn ($transaction) => $transaction->course_id.'-'.$transaction->class_category_id)
+            ->flatMap(function ($transactions) {
+                $groups = collect();
+                while ($transactions->isNotEmpty()) {
+                    $members = $transactions->unique('user_id')->take($transactions->first()->classCategory->capacity);
+                    $groups->push($members->values());
+                    $transactions = $transactions->reject(fn ($transaction) => $members->contains('id', $transaction->id));
+                }
+                return $groups;
+            });
+        $teachers = \App\Models\User::whereHas('roles', fn ($query) => $query->where('name', 'guru'))
+            ->where('is_active', true)->orderBy('name')->get();
+
+        return view('pages.student-registrations.index', compact('waitingGroups', 'teachers',
             'transactions', 'statusCounts', 'status', 'search'
         ));
     }
